@@ -39,7 +39,7 @@ describe('Section 1: Functional tests', () => {
     })
 
     it('User can submit form with valid data and only mandatory fields added', ()=>{
-        inputValidData('anything')
+        inputValidData('anything') //this function takes data from lines 71-82 (preset data for autocompletion)
         cy.get('.submit_button').should('be.enabled')
         cy.get('.submit_button').click()
         cy.get('#success_message').should('be.visible')
@@ -68,10 +68,24 @@ describe('Section 1: Functional tests', () => {
     })
 })
 
+function inputValidData(username) {
+    cy.log('Username will be filled')
+    cy.get('input[data-testid="user"]').type(username)
+    cy.get('#email').type('validemail@yeap.com')
+    cy.get('[data-cy="name"]').type('John')
+    cy.get('#lastName').type('Doe')
+    cy.get('[data-testid="phoneNumberTestId"]').type('10203040')
+    // If element has multiple classes, then one of them can be used
+    cy.get('#password').type('MyPass')
+    cy.get('#confirm').type('MyPass')
+    cy.get('h2').contains('Password').click()
+}
+
+
 /*
 Assignement 5: create more visual tests
 */
-
+/*
 describe('Section 2: Visual tests', () => {
     it('Check that logo is correct and has correct size', () => {
         cy.log('Will check logo source and size')
@@ -155,16 +169,4 @@ describe('Section 2: Visual tests', () => {
     // Create test similar to previous one
 
 })
-
-function inputValidData(username) {
-    cy.log('Username will be filled')
-    cy.get('input[data-testid="user"]').type(username)
-    cy.get('#email').type('validemail@yeap.com')
-    cy.get('[data-cy="name"]').type('John')
-    cy.get('#lastName').type('Doe')
-    cy.get('[data-testid="phoneNumberTestId"]').type('10203040')
-    // If element has multiple classes, then one of them can be used
-    cy.get('#password').type('MyPass')
-    cy.get('#confirm').type('MyPass')
-    cy.get('h2').contains('Password').click()
-}
+*/
