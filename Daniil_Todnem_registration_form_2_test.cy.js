@@ -204,7 +204,7 @@ describe('Section 2: Visual tests', () => {
         cy.get('#animal').select(2).screenshot('Animal dropdown screenshot')
         cy.screenshot('Full page screenshot')
 
-        // Here are given different solutions how to get the length of array of elements in Cars dropdown
+        // Here are given different solutions how to get the length of array of elements in animals dropdown
         // Next 2 lines of code do exactly the same!
         cy.get('#animal').children().should('have.length', 6)
         cy.get('#animal').find('option').should('have.length', 6)
