@@ -165,3 +165,124 @@ Task list:
     * If city is already chosen and country is updated, then city choice should be removed
     * add file (google yourself for solution)
  */
+
+
+    //inserting a function that will fill in all fields
+function inputValidData(username) {
+    cy.log('All fields will be filled')
+    cy.get('#name').type(username)
+    cy.get('input[type="email"]').type('validemail@yeap.com')
+    cy.get('#country').select('Estonia')
+    cy.get('#city').select('Tallinn')
+    cy.get('input[type="date"]').eq(0).type('2023-06-06')
+    cy.get('#birthday').type('2001-01-01')
+    cy.get('input[type="checkbox"]').eq(0).check()
+    cy.get('input[type="checkbox"]').eq(1).check()
+}
+
+describe('These are functional tests for registration form 3', () => {
+    it('All fields are filled in and validated, submission is sucessfull', () => {
+        inputValidData('Tester1')
+        //added radio button here because it cannot be unclicked
+        cy.get('input[type="radio"]').eq(0).click()
+        cy.get('input[type="submit"]').eq(1).should('be.enabled')
+        //asserting that there is no errors
+        cy.get('span').contains('Email is required.').should('not.be.visible')
+        cy.get('span').contains('Invalid email address').should('not.be.visible')
+        cy.get('input[type="submit"]').eq(1).click()
+        //asserting that submit button takes user to correct destination
+        cy.url().should('contain', '/upload_file.html')      
+    });
+    it('Only mandatory fields are filled in, submission is sucessfull', () => {
+        inputValidData('Tester1')
+        //clearing optional fields
+        cy.get('#name').clear()
+        cy.get('input[type="date"]').clear()
+        cy.get('#birthday').clear()
+        //asserting that there is no errors
+        cy.get('input[type="submit"]').eq(1).should('be.enabled')
+        cy.get('span').contains('Email is required.').should('not.be.visible')
+        cy.get('span').contains('Invalid email address').should('not.be.visible')
+        cy.get('input[type="submit"]').eq(1).click()
+        //asserting that submit button takes user to correct destination
+        cy.url().should('contain', '/upload_file.html')      
+    });
+    it('Email is absent, submission unsuccsessfull', () => {
+        inputValidData('Tester1')
+        cy.get('input[type="email"]').clear()
+        //clearing optional fields
+        cy.get('#name').clear()
+        cy.get('input[type="date"]').clear()
+        cy.get('#birthday').clear()
+        cy.get('input[type="checkbox"]').eq(1).uncheck()
+        //asserting that there is no errors
+        cy.get('input[type="submit"]').eq(1).should('be.disabled')
+        cy.get('h2').click
+        cy.get('span').contains('Email is required.').should('be.visible')
+        cy.get('span').contains('Invalid email address').should('not.be.visible')
+    });
+    it('Country is absent, submission unsuccsessfull', () => {
+        inputValidData('Tester1')
+        cy.get('#country').select('')
+        //clearing optional fields
+        cy.get('#name').clear()
+        cy.get('input[type="date"]').clear()
+        cy.get('#birthday').clear()
+        cy.get('input[type="checkbox"]').eq(1).uncheck()
+        //asserting that there is no errors
+        cy.get('input[type="submit"]').eq(1).should('be.disabled')
+        cy.get('h2').click
+        cy.get('span').contains('Email is required.').should('not.be.visible')
+        cy.get('span').contains('Invalid email address').should('not.be.visible')
+    });
+    it('Accepting policies confirmation is absent, submission unsuccsessfull', () => {
+        inputValidData('Tester1')
+        cy.get('input[type="checkbox"]').eq(0).uncheck()
+        //clearing optional fields
+        cy.get('#name').clear()
+        cy.get('input[type="date"]').clear()
+        cy.get('#birthday').clear()
+        cy.get('input[type="checkbox"]').eq(1).uncheck()
+        //asserting that there is no errors
+        cy.get('input[type="submit"]').eq(1).should('be.disabled')
+        cy.get('h2').click
+        cy.get('span').contains('Email is required.').should('not.be.visible')
+        cy.get('span').contains('Invalid email address').should('not.be.visible')
+    });
+    it('If city is already chosen and country is updated, then city choice should be removed', () => {
+        inputValidData('Tester1')
+        //chosing another country
+        cy.get('#country').select('Spain')
+        //asserting that city has been disselected
+        cy.get('#city').should('not.be.checked')
+        //asserting that there is no errors
+        cy.get('input[type="submit"]').eq(1).should('be.disabled')
+        cy.get('h2').click
+        cy.get('span').contains('Email is required.').should('not.be.visible')
+        cy.get('span').contains('Invalid email address').should('not.be.visible')
+    });
+    it('Uploading a file is successful', () => {
+        inputValidData('Tester1');
+        //uploading a file using functions, chatgtp suggestion (in order for this to work foo.txt is located in fixtures folder)
+        const fileName = 'foo.txt';
+        const fileType = 'text/plain';
+        const filePath = `/${fileName}`; 
+      
+        cy.fixture(filePath, 'base64').then((fileContent) => {
+          const blob = Cypress.Blob.base64StringToBlob(fileContent, fileType);
+          const file = new File([blob], fileName, { type: fileType });
+      
+          cy.get('#myFile').then((input) => {
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+      
+            input[0].files = dataTransfer.files;
+            cy.wrap(input).trigger('change', { force: true });
+          });
+        });
+        //click submit
+        cy.get('input[type="submit"]').eq(1).click()
+        //check that we are redirected
+        cy.url().should('contain', '/upload_file.html')   
+      });
+});
