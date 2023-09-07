@@ -3,7 +3,7 @@ beforeEach(() => {
 })
 
 /*
-Assignement 4: add content to the following tests
+Assignement 4
 */
 
 describe('Section 1: Functional tests', () => {
@@ -75,7 +75,6 @@ function inputValidData(username) {
     cy.get('[data-cy="name"]').type('John')
     cy.get('#lastName').type('Doe')
     cy.get('[data-testid="phoneNumberTestId"]').type('10203040')
-    // If element has multiple classes, then one of them can be used
     cy.get('#password').type('MyPass')
     cy.get('#confirm').type('MyPass')
     cy.get('h2').contains('Password').click()
@@ -83,14 +82,14 @@ function inputValidData(username) {
 
 
 /*
-Assignement 5: create more visual tests
+Assignement 5
 */
 
 describe('Section 2: Visual tests', () => {
     it('Check that logo is correct and has correct size', () => {
         cy.log('Will check logo source and size')
         cy.get('img').should('have.attr', 'src').should('include', 'cerebrum_hub_logo')
-        // get element and check its parameter height, to less than 178 and greater than 100
+        //Get element and check its parameter height, to less than 178 and greater than 100
         cy.get('img').invoke('height').should('be.lessThan', 178)
             .and('be.greaterThan', 100)   
     })
@@ -98,6 +97,7 @@ describe('Section 2: Visual tests', () => {
     it('My test for second picture', () => {
         cy.log('Will ceck that cypress logo is correct and has correct size')
         cy.get("img").eq(1).should('have.attr', 'src').should('include', 'cypress_logo')
+        //Checking width and height
         cy.get('img').eq(1).invoke('height').should('be.lessThan', 89).and('be.greaterThan', 87)
         cy.get('img').eq(1).invoke('width').should('be.lessThan', 117).and('be.greaterThan', 115)
     });
@@ -105,22 +105,22 @@ describe('Section 2: Visual tests', () => {
     it('Check navigation part', () => {
         cy.get('nav').children().should('have.length', 2)
 
-        // Get navigation element, find siblings that contains h1 and check if it has Registration form in string
+        //Get navigation element, find siblings that contains h1 and check if it has Registration form in string
         cy.get('nav').siblings('h1').should('have.text', 'Registration form number 2')
         
-        // Get navigation element, find its first child, check the link content and click it
+        //Get navigation element, find its first child, check the link content and click it
         cy.get('nav').children().eq(0).should('be.visible')
             .and('have.attr', 'href', 'registration_form_1.html')
             .click()
         
-        // Check that currently opened URL is correct
+        //Check that currently opened URL is correct
         cy.url().should('contain', '/registration_form_1.html')
         
         // Go back to previous page
         cy.go('back')
         cy.log('Back again in registration form 2')
     })
-    // Second nav link test
+        //Second nav link test
     it('Check navigation part for second link', () => {
         cy.get('nav').children().should('have.length', 2) 
         cy.get('nav').siblings('h1').should('have.text', 'Registration form number 2')
@@ -131,10 +131,10 @@ describe('Section 2: Visual tests', () => {
     });
 
     it('Check that radio button list is correct', () => {
-        // Array of found elements with given selector has 4 elements in total
+        //Array of found elements with given selector has 4 elements in total
         cy.get('input[type="radio"]').should('have.length', 4)
 
-        // Verify labels of the radio buttons
+        //Verify labels of the radio buttons
         cy.get('input[type="radio"]').next().eq(0).should('have.text','HTML')
         cy.get('input[type="radio"]').next().eq(1).should('have.text','CSS')
         cy.get('input[type="radio"]').next().eq(2).should('have.text','JavaScript')
@@ -152,13 +152,11 @@ describe('Section 2: Visual tests', () => {
         cy.get('input[type="radio"]').eq(0).should('not.be.checked')
     })
 
-    // Create test similar to previous one verifying check boxes
-
     it('Check that check boxes list is correct', () => {
-        // Array of found elements with given selector has 3 elements in total
+        //Array of found elements with given selector has 3 elements in total
         cy.get('input[type="checkbox"]').should('have.length', 3)
-
-        // Verify labels of the check boxes 
+       
+        //Verify labels of the check boxes 
         cy.get('input[type="checkbox"]').next().eq(0).should('have.text','I have a bike')
         cy.get('input[type="checkbox"]').next().eq(1).should('have.text','I have a car')
         cy.get('input[type="checkbox"]').next().eq(2).should('have.text','I have a boat')
@@ -168,31 +166,43 @@ describe('Section 2: Visual tests', () => {
         cy.get('input[type="checkbox"]').eq(1).should('not.be.checked')
         cy.get('input[type="checkbox"]').eq(2).should('not.be.checked')
 
-        //Multiple checkboxes can be ticked
+        //One check box can be checked and will stay checked
+        cy.get('input[type="checkbox"]').eq(0).check().should('be.checked')
+        cy.get('input[type="checkbox"]').eq(1).should('not.be.checked')
+        cy.get('input[type="checkbox"]').eq(2).should('not.be.checked')
+
+        //Two check boxes can be checked and will stay checked
+        //reseting the page to default
+        cy.reload()
+        cy.get('input[type="checkbox"]').eq(0).check().should('be.checked')
+        cy.get('input[type="checkbox"]').eq(1).check().should('be.checked')
+        //Asserting that third check box is not checked
+        cy.get('input[type="checkbox"]').eq(2).should('be.unchecked')
+
+        //Multiple checkboxes can be checked and will stack checked
+        //reseting the page to default
+        cy.reload()
         cy.get('input[type="checkbox"]').eq(0).check().should('be.checked')
         cy.get('input[type="checkbox"]').eq(1).check().should('be.checked')
         cy.get('input[type="checkbox"]').eq(2).check().should('be.checked')
-        cy.get('input[type="checkbox"]').eq(0).should('be.checked')
-        cy.get('input[type="checkbox"]').eq(1).should('be.checked')
-        cy.get('input[type="checkbox"]').eq(2).should('be.checked')
     })
 
 
     it('Car dropdown is correct', () => {
-        // Here is an example how to explicitely create screenshot from the code
-        // Select second element and create screenshot for this area, and full page
+        //Here is an example how to explicitely create screenshot from the code
+        //Select second element and create screenshot for this area, and full page
         cy.get('#cars').select(1).screenshot('Cars drop-down')
         cy.screenshot('Full page screenshot')
 
-        // Here are given different solutions how to get the length of array of elements in Cars dropdown
-        // Next 2 lines of code do exactly the same!
+        //Here are given different solutions how to get the length of array of elements in Cars dropdown
+        //Next 2 lines of code do exactly the same!
         cy.get('#cars').children().should('have.length', 4)
         cy.get('#cars').find('option').should('have.length', 4)
         
         //Check  that first element in the dropdown has text Volvo
         cy.get('#cars').find('option').eq(0).should('have.text', 'Volvo')
         
-        // Advanced level how to check the content of the Cars dropdown
+        //Advanced level how to check the content of the Cars dropdown
         cy.get('#cars').find('option').then(options => {
             const actual = [...options].map(option => option.value)
             expect(actual).to.deep.eq(['volvo', 'saab', 'opel', 'audi'])
@@ -204,15 +214,15 @@ describe('Section 2: Visual tests', () => {
         cy.get('#animal').select(2).screenshot('Animal dropdown screenshot')
         cy.screenshot('Full page screenshot')
 
-        // Here are given different solutions how to get the length of array of elements in animals dropdown
-        // Next 2 lines of code do exactly the same!
+        //Here are given different solutions how to get the length of array of elements in animals dropdown
+        //Next 2 lines of code do exactly the same!
         cy.get('#animal').children().should('have.length', 6)
         cy.get('#animal').find('option').should('have.length', 6)
         
         //Check that third element in the dropdown has text Snake
         cy.get('#animal').find('option').eq(2).should('have.text', 'Snake')
         
-        // Advanced level how to check the content of the animal dropdown
+        //Advanced level how to check the content of the animal dropdown
         cy.get('#animal').find('option').then(options => {
             const actual = [...options].map(option => option.value)
             expect(actual).to.deep.eq(['dog', 'cat', 'snake', 'hippo', 'cow', 'mouse']) // noticed that in html actual value of a horse is 'mouse'
