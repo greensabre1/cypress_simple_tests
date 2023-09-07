@@ -1,16 +1,8 @@
 beforeEach(() => {
     cy.visit('cypress/fixtures/registration_form_3.html')
 })
-
 /*
 BONUS TASK: add visual tests for registration form 3
-Task list:
-* Test suite for visual tests for registration form 3 is already created
-* Create tests to verify visual parts of the page:
-    * radio buttons and its content
-    * dropdown and dependencies between 2 dropdowns
-    * checkboxes, their content and links
-    * email format
  */
 describe('This is visual test suite for registration form 3', () => {
     it('Check that radio button list is correct', () => {
@@ -153,21 +145,10 @@ describe('This is visual test suite for registration form 3', () => {
         cy.get('span').contains('Invalid email address')
     });
 })
-
 /*
 BONUS TASK: add functional tests for registration form 3
-Task list:
-* Create second test suite for functional tests
-* Create tests to verify logic of the page:
-    * all fields are filled in + validation
-    * only mandatory fields are filled in + validations
-    * mandatory fields are absent + validations (try using function)
-    * If city is already chosen and country is updated, then city choice should be removed
-    * add file (google yourself for solution)
  */
-
-
-    //inserting a function that will fill in all fields
+        //inserting a function that will fill in all fields
 function inputValidData(username) {
     cy.log('All fields will be filled')
     cy.get('#name').type(username)
@@ -191,7 +172,9 @@ describe('These are functional tests for registration form 3', () => {
         cy.get('span').contains('Invalid email address').should('not.be.visible')
         cy.get('input[type="submit"]').eq(1).click()
         //asserting that submit button takes user to correct destination
-        cy.url().should('contain', '/upload_file.html')      
+        cy.url().should('contain', '/upload_file.html')    
+        //asserting that success message is visible
+        cy.get('h1').contains('Submission received').should('be.visible')  
     });
     it('Only mandatory fields are filled in, submission is sucessfull', () => {
         inputValidData('Tester1')
@@ -206,6 +189,8 @@ describe('These are functional tests for registration form 3', () => {
         cy.get('input[type="submit"]').eq(1).click()
         //asserting that submit button takes user to correct destination
         cy.url().should('contain', '/upload_file.html')      
+        //asserting that success message is visible
+        cy.get('h1').contains('Submission received').should('be.visible')
     });
     it('Email is absent, submission unsuccsessfull', () => {
         inputValidData('Tester1')
@@ -284,5 +269,7 @@ describe('These are functional tests for registration form 3', () => {
         cy.get('input[type="submit"]').eq(1).click()
         //check that we are redirected
         cy.url().should('contain', '/upload_file.html')   
+        //asserting that success message is visible
+        cy.get('h1').contains('Submission received').should('be.visible')
       });
 });
